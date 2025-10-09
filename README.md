@@ -34,18 +34,24 @@ sudo apt install yt-dlp ffmpeg
 # macOS (Homebrew)
 brew install yt-dlp ffmpeg
 
-🚀 Install
+# 🔧 Linux Audio Backend Requirements
+
+This project uses rodio
+ for audio playback, which relies on the cpal
+ library to interface with the system's audio backend.
+
+On Linux, cpal requires development headers for at least one supported audio backend to compile. The most common option is ALSA.
+
+To build this project on Linux, you need to install the ALSA development libraries:
+
+✅ Install on Debian/Ubuntu:
+sudo apt install libasound2-dev
+
+✅ Install on Fedora:
+sudo dnf install alsa-lib-devel
+
+If you're using another distribution, install the equivalent of the ALSA development package.
+
+# 🚀 Install
 cargo install yta-cli
 
-🧠 Commands
-Command	Description
-create <name>	Create a new playlist
-download <url> ...	Download audio from YouTube URLs
-download-playlist	Download entire YouTube playlist
-play <name>	Play audio from a playlist
-pause / resume	Pause / resume audio playback
-skip / skip-by 	Skip current song / skip forward N seconds
-search <query>	Search YouTube and show results
-download-result	Download from the last search result
-get-playlists	List all playlists
-exit	Exit the CLI
