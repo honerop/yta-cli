@@ -34,7 +34,7 @@ sudo apt install yt-dlp ffmpeg
 # macOS (Homebrew)
 brew install yt-dlp ffmpeg
 
-🔧 Linux Audio Backend Requirements
+# 🔧 Linux Audio Backend Requirements
 
 This project uses rodio
  for audio playback, which relies on the cpal
@@ -52,6 +52,6 @@ sudo dnf install alsa-lib-devel
 
 If you're using another distribution, install the equivalent of the ALSA development package.
 
-🚀 Install
+# 🚀 Install
 cargo install yta-cli
 
