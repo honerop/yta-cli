@@ -34,6 +34,24 @@ sudo apt install yt-dlp ffmpeg
 # macOS (Homebrew)
 brew install yt-dlp ffmpeg
 
+🔧 Linux Audio Backend Requirements
+
+This project uses rodio
+ for audio playback, which relies on the cpal
+ library to interface with the system's audio backend.
+
+On Linux, cpal requires development headers for at least one supported audio backend to compile. The most common option is ALSA.
+
+To build this project on Linux, you need to install the ALSA development libraries:
+
+✅ Install on Debian/Ubuntu:
+sudo apt install libasound2-dev
+
+✅ Install on Fedora:
+sudo dnf install alsa-lib-devel
+
+If you're using another distribution, install the equivalent of the ALSA development package.
+
 🚀 Install
 cargo install yta-cli
 
