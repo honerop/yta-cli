@@ -7,6 +7,7 @@ repository = "https://github.com/honerop/yta-cli"
 homepage = "https://github.com/honerop/yta-cli"
 readme = "README.md"
 keywords = ["yt-dlp", "youtube", "cli", "music", "audio"]
+license = "MIT"
 
 [[bin]]
 name = "yta-cli"
