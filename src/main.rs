@@ -91,6 +91,8 @@ enum Commands {
     GetPlaylists,
     ///Exit program
     Exit,
+    ///Change current audio to previous
+    Previous,
     ///Pause current playing audio
     Pause,
     ///Resumes current playing audio
@@ -151,6 +153,13 @@ async fn main() {
             Ok(matches) => {
                 let cli = Cli::from_arg_matches(&matches).unwrap(); // safe unwrap
                 match cli.command {
+                    Commands::Previous => {
+                        if let Some(tx) = &control_playlist {
+                            handle_sending_playlist_control(tx, PlaylistControl::Previous).await;
+                        } else {
+                            println!("Currently no playlist is playing");
+                        }
+                    }
                     Commands::DownloadPlaylist { url, playlist_name } => {
                         let paths = paths.clone();
                         let printer = printer.clone();
@@ -290,6 +299,7 @@ async fn handle_sending_playlist_control(
 }
 fn display_playlist_control(playlist_control: &PlaylistControl) -> String {
     match playlist_control {
+        PlaylistControl::Previous => "Previous".into(),
         PlaylistControl::Skip => "Skip".into(),
         PlaylistControl::Pause => "Pause".into(),
         PlaylistControl::Play => "Play".into(),

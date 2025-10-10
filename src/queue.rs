@@ -6,12 +6,12 @@ use tokio::{
 
 use crate::utils::get_default_path;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct Queue {
     pub items: Vec<QueueItem>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct QueueItem {
     pub file_path: String,
 }
