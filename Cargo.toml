@@ -1,6 +1,6 @@
 [package]
 name = "yta-cli"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "CLI REPL tool for creating and playing playlists using yt-dlp"
 repository = "https://github.com/honerop/yta-cli"
