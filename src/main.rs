@@ -179,11 +179,11 @@ async fn main() {
                     }
                     Commands::Rename {
                         current_name,
-                        next_name,
+                        target_name,
                         playlist_name,
                     } => {
                         if let Err(e) =
-                            handle_renaming_audio(&playlist_name, next_name, &current_name).await
+                            handle_renaming_audio(&playlist_name, target_name, &current_name).await
                         {
                             println!("Error while renaming audio: {e}");
                         }
