@@ -21,7 +21,7 @@ pub async fn get_default_path() -> Result<PathBuf, std::io::Error> {
             std::io::ErrorKind::NotFound,
             "Couldnt find home dir",
         ))?
-        .join(".ytdl-music");
+        .join(".yta-cli");
     fs::create_dir_all(&dir).await?;
     Ok(dir)
 }
