@@ -53,7 +53,7 @@ pub async fn download_youtube_playlist(
         .as_array()
         .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Invalid playlist JSON"))?;
 
-    for entry in entries {
+    for entry in entries.iter() {
         if let Some(video_id) = entry["id"].as_str() {
             let paths = paths.clone();
             let url = format!("https://www.youtube.com/watch?v={}", video_id);
@@ -62,8 +62,10 @@ pub async fn download_youtube_playlist(
             let clean = sanitize_filename::sanitize(title.trim());
             let filename = format!("{}.mp3", clean);
             let output_path = playlist_path.join(&filename);
+
             queue.items.push(QueueItem {
                 file_path: output_path.to_string_lossy().to_string(),
+                name: clean,
             });
 
             download_youtube_video_audio(paths, &url, output_path).await?;
