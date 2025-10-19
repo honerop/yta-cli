@@ -10,7 +10,7 @@ use tokio::sync::{
 use crate::{
     download::{download_youtube_playlist, download_youtube_video_audio},
     playlist::{PlaylistControl, play_playlist},
-    queue::Queue,
+    queue::{Queue, handle_getting_queue, handle_removing_audio, handle_renaming_audio},
     search::search_youtube,
     utils::{
         Paths, create_playlist, get_default_path, get_playlists, get_programs_paths,
@@ -99,11 +99,28 @@ enum Commands {
     Resume,
     ///Skips current playing audio
     Skip,
-    ///Skips current playlist audio by some seconds
+    ///Skips current audio by some seconds
     SkipBy {
         #[arg(help = "How many seconds you want to skip by")]
         seconds: u64,
     },
+    ///Renames audio in some playlist
+    Rename {
+        playlist_name: String,
+        #[arg(long, short, help = "Current name of audio")]
+        current_name: String,
+        #[arg(long, short, help = "Target name of audio")]
+        target_name: String,
+    },
+    ///Remove audio from playlist
+    RemoveAudio {
+        #[arg(help = "Playlist from which you want to delete audio")]
+        playlist_name: String,
+        #[arg(long, short, help = "Name of audio")]
+        name: String,
+    },
+    ///Get queue of playlist
+    GetQueue { playlist_name: String },
 }
 #[tokio::main]
 async fn main() {
@@ -158,6 +175,31 @@ async fn main() {
                             handle_sending_playlist_control(tx, PlaylistControl::Previous).await;
                         } else {
                             println!("Currently no playlist is playing");
+                        }
+                    }
+                    Commands::Rename {
+                        current_name,
+                        next_name,
+                        playlist_name,
+                    } => {
+                        if let Err(e) =
+                            handle_renaming_audio(&playlist_name, next_name, &current_name).await
+                        {
+                            println!("Error while renaming audio: {e}");
+                        }
+                    }
+                    Commands::RemoveAudio {
+                        playlist_name,
+                        name,
+                    } => {
+                        if let Err(e) = handle_removing_audio(&name, &playlist_name).await {
+                            println!("Error while removing audio: {e}");
+                        }
+                    }
+                    Commands::GetQueue { playlist_name } => {
+                        match handle_getting_queue(&playlist_name).await {
+                            Ok(v) => println!("queue: {:?}", v),
+                            Err(e) => println!("Error while trying to get queue: {e}"),
                         }
                     }
                     Commands::DownloadPlaylist { url, playlist_name } => {
@@ -344,8 +386,14 @@ async fn handle_download(
             Ok(_) => {
                 queue.items.push(queue::QueueItem {
                     file_path: output_path.to_string_lossy().to_string(),
+                    name: title,
                 });
-                queue.to_json(&playlist_name).await.unwrap();
+                if let Err(e) = queue.to_json(&playlist_name).await {
+                    let _ = sender.send(format!(
+                        "Failed to save json of playlist: {playlist_name},error: {e}"
+                    ));
+                    return;
+                }
                 let _ = sender.send(format!("Downloaded: {filename}"));
             }
             Err(e) => {
@@ -396,7 +444,8 @@ pub async fn handle_download_last_search_result(
         }
     };
 
-    let filename = format!("{}.mp3", sanitize_filename::sanitize(title.trim()));
+    let sanitezed = sanitize_filename::sanitize(title.trim());
+    let filename = format!("{}.mp3", sanitezed);
     let output_path = default_path.join("playlists").join(&name).join(&filename);
 
     let mut queue = match Queue::from_queue_json(&name).await {
@@ -414,6 +463,7 @@ pub async fn handle_download_last_search_result(
     } else {
         queue.items.push(queue::QueueItem {
             file_path: output_path.to_string_lossy().to_string(),
+            name: sanitezed,
         });
 
         if let Err(e) = queue.to_json(&name).await {
