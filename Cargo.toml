@@ -1,0 +1,27 @@
+[package]
+name = "yta-cli"
+version = "0.2.0"
+edition = "2024"
+description = "CLI REPL tool for creating and playing playlists using yt-dlp"
+repository = "https://github.com/honerop/yta-cli"
+homepage = "https://github.com/honerop/yta-cli"
+readme = "README.md"
+keywords = ["yt-dlp", "youtube", "cli", "music", "audio"]
+license = "MIT"
+
+[[bin]]
+name = "yta-cli"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.48", features = ["derive"] }
+sanitize-filename = "0.6.0"
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0.145"
+serde = {version="1.0.228" ,features=["derive"]}
+rodio = { version = "0.21.1", default-features = false, features = ["mp3","playback"] }
+which = "8.0.0"
+dirs-next = "2.0.0"
+reedline = {version  = "0.42.0",features = ["external_printer"]}
+shell-words = "1.1.0"
+chrono = "0.4.42"
